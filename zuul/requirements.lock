@@ -1,0 +1,6 @@
+dependencies:
+- name: nodepool
+  repository: file://../nodepool
+  version: 0.1.0
+digest: sha256:3e221bc94e4d44ccabbac74a51f33f21ce206a7cc22aeb9ed846c88df3d4b336
+generated: 2018-05-25T00:52:15.201743769+02:00

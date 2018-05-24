@@ -20,23 +20,44 @@ spec:
         release: {{ .Release.Name }}
     spec:
       containers:
-        - name: {{ .Chart.Name }}
+        - name: zuul-web
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["zuul-web", "-d", "-c", "/etc/zuul/zuul.conf"]
+          volumeMounts:
+            - mountPath: /etc/zuul
+              name: zuul-config
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 9000
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
+          #livenessProbe:
+          #  httpGet:
+          #    path: /
+          #    port: http
+          #readinessProbe:
+          #  httpGet:
+          #    path: /
+          #    port: http
           resources:
 {{ toYaml .Values.resources | indent 12 }}
+
+        - name: zuul-scheduler
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["zuul-scheduler", "-d", "-c", "/etc/zuul/zuul.conf"]
+          volumeMounts:
+            - mountPath: /etc/zuul
+              name: zuul-config
+
+        - name: zuul-executor
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["zuul-executor", "-d", "-c", "/etc/zuul/zuul.conf"]
+          volumeMounts:
+            - mountPath: /etc/zuul
+              name: zuul-config
+
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
@@ -49,3 +70,8 @@ spec:
       tolerations:
 {{ toYaml . | indent 8 }}
     {{- end }}
+
+      volumes:
+        - name: zuul-config
+          configMap:
+            name: {{ template "zuul.fullname" . }}
