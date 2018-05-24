@@ -2,31 +2,80 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
+nodepool:
+  replicaCount: 1
 
-image:
-  repository: docker.io/nicolast/nodepool
-  tag: 3.0.1
-  pullPolicy: IfNotPresent
+  image:
+    repository: docker.io/nicolast/nodepool
+    tag: latest
+    pullPolicy: IfNotPresent
 
-service:
-  type: ClusterIP
-  port: 80
+  service:
+    type: ClusterIP
+    port: 80
 
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #  cpu: 100m
-  #  memory: 128Mi
-  # requests:
-  #  cpu: 100m
-  #  memory: 128Mi
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #  cpu: 100m
+    #  memory: 128Mi
+    # requests:
+    #  cpu: 100m
+    #  memory: 128Mi
 
-nodeSelector: {}
+  nodeSelector: {}
 
-tolerations: []
+  tolerations: []
 
-affinity: {}
+  affinity: {}
+
+node:
+  replicaCount: 1
+
+  image:
+    repository: docker.io/nicolast/nodepool-node
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  resources: {}
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+ssh:
+  privateKey: |-
+    -----BEGIN RSA PRIVATE KEY-----
+    MIIEogIBAAKCAQEA0NU+QtsPvG+tBTsc7VynXk39YJPGJ3u5WHQgWifREOnIh7Hy
+    FimZmbkCW0NQ6DtEiX/oCt0rSVcOOm+4wb35jL5ZlxUVr2aSVXaezPBsp9dK62Qo
+    QqETAiZNJeSVQqlFQNCCyhW47FcvFPZqW9SlvaMbWTyxbsXbwtKYdvHmxf2SxvXY
+    ldVXBq0/w2TAXbBNmZhyWqezgLKY4se77/Oxy5CuOlAmxDUqk0iwwHn86NS61TSB
+    bsiQlA9dmbF3MJpYEUjU3cfpETnoqao3t47GWrG5Js/GTXrIRgk2C9/SethTIAVk
+    AWAzsL9FEtudy6R3r32C3YquIiqrfT+ndun6AwIDAQABAoIBABsbgxB0lQ9Vw7TJ
+    HpElFMimAPzXUcJwSffUYxqwzm+OmSwcChucXMbagBbOnyL2Boh+pOU8HlFPzpYB
+    SI9FlK4TS1fUMdNp0hbr5eMeVkxXIu95OcykUe5WgG8pw8I6bLXkGwYWWcG7822a
+    KuYurTD3iiZEPZfucP9SDN5ruhP7AVCGFUHt86XgaCG6TcHUrcIpSn+zO4gStClt
+    uwOqJZqWY9i3VrVP9dOZb60iPZF4nDUglAYr2Gxe5BtLLStbk6jPLLGT2zcqQq4k
+    MFi3C0fShQoJroFtVYOm3Y+3KG4PKJIfz38ZmcQ0c9BxvwhnTK5JY0djQAtMt1Cw
+    z77yGTECgYEA77vx6+WDvTKlRGQVuQDXsnxV3jZE4EnWNuE7O2UOfDJ61RKtIT4N
+    VksgQyc7F3K5HLODzFpLUWa9FEau3t6r5/RWHf98UUzJ1flrSiQne5fVcCuXQhVG
+    mj4KgcMWTvAMw3qOtNoEYKCGCUFq447pU7C8sVxAqq++jYRBkwxAxssCgYEA3wCP
+    pv5IdyLnJn3HmKWgrPbUeqdbt1bP+j3rGcsrOjXPJaXPhCKeTPeug30znteSw9iK
+    fB8tF3KtD+59z7R2jCXkA41rUSOEVIUBnTsRtUOLKKzG7f4hIf6YM5b6FE/52uZs
+    MXVi9eL8xspC6WsYGE0sUrsFeqDVLs/43Ez+eqkCgYByMgLRLakNTLyw0UQPtjkJ
+    CnUUvqEcfc+OoMdISaEWxC0CpjzWIurTekHJ+zwItVs8Mr7Lbw+FnPzgVbMi8srM
+    WPVUoMilKYDTblYPIR21n+PJ5NnOXrgc7QSwPy+3Nl2+F/k2aMvBA3YVnpW+A+td
+    NEkN6zXamJCadK+Pzjxk9QKBgBW8hEQOvRl/uXAzCmWCn2q8lHFwJqx0Ncl6h5P4
+    DbqazBorU1LZ3Pw7mDMQ3Rs6f/++96CpmUeT0fKfmHvKZ1O5zcPa4P8Dqz5hyIp+
+    23cDomjQjoNcJfaeTk+ZA78/HGeN1jXr7z1wZpsp0+PUoICd5RgbSqltS9pIQ0WV
+    66ghAoGAPwKiNVjNLQAH+TRgKYNd7MXxTfP6IefFe7k2N4HWribFZgdOquoXVF9j
+    NX3bXjuRBadE5CFi0+tPm99Y6xRyCRzJL943wV+TZ67gGEwFC2LKci96CbkvwljU
+    6Xo8kLkUyUa5EDQrc9YVOIG3ZLylOLwEOdVWzQn8Oi7O6HEp4kk=
+    -----END RSA PRIVATE KEY-----
+  publicKey: |-
+    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQ1T5C2w+8b60FOxztXKdeTf1gk8Yne7lYdCBaJ9EQ6ciHsfIWKZmZuQJbQ1DoO0SJf+gK3StJVw46b7jBvfmMvlmXFRWvZpJVdp7M8Gyn10rrZChCoRMCJk0l5JVCqUVA0ILKFbjsVy8U9mpb1KW9oxtZPLFuxdvC0ph28ebF/ZLG9diV1VcGrT/DZMBdsE2ZmHJap7OAspjix7vv87HLkK46UCbENSqTSLDAefzo1LrVNIFuyJCUD12ZsXcwmlgRSNTdx+kROeipqje3jsZasbkmz8ZNeshGCTYL39J62FMgBWQBYDOwv0US253LpHevfYLdiq4iKqt9P6d26foD root@nodepool

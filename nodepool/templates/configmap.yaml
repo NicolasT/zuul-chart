@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "nodepool.fullname" . }}
+  labels:
+    app: {{ template "nodepool.name" . }}
+    chart: {{ template "nodepool.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  nodepool.yaml: |-
+    zookeeper-servers:
+      - host: {{ .Release.Name }}-zookeeper-headless
+
+    labels:
+      - name: nodepool-node
+
+    providers:
+      - name: {{ .Release.Name }}-nodepool
+        driver: dns
+        pools:
+          - name: main
+            labels: nodepool-node
+            username: root
+            fqdn: {{ template "nodepool.fullname" . }}-nodes

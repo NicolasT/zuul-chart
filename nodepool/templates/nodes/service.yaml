@@ -1,19 +1,21 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "nodepool.fullname" . }}
+  name: {{ template "nodepool.fullname" . }}-nodes
   labels:
     app: {{ template "nodepool.name" . }}
     chart: {{ template "nodepool.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  type: {{ .Values.nodepool.service.type }}
+  type: ClusterIP
+  clusterIP: "None"
   ports:
-    - port: {{ .Values.nodepool.service.port }}
-      targetPort: http
+    - port: 22
+      targetPort: ssh
       protocol: TCP
-      name: http
+      name: ssh
   selector:
     app: {{ template "nodepool.name" . }}
+    role: node
     release: {{ .Release.Name }}

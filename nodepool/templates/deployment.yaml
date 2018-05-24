@@ -8,44 +8,71 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.nodepool.replicaCount }}
   selector:
     matchLabels:
       app: {{ template "nodepool.name" . }}
+      role: nodepool-launcher
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
         app: {{ template "nodepool.name" . }}
+        role: nodepool-launcher
         release: {{ .Release.Name }}
     spec:
+      initContainers:
+        - name: nodepool-config-builder
+          image: docker.io/nicolast/nodepool-config-builder
+          command: ["sh"]
+          args:
+            - "-c"
+            - "cat /mnt/template/nodepool.yaml | /usr/src/nodepool-config-builder/nodepool-config-builder.py > /mnt/config/nodepool.yaml"
+
+          volumeMounts:
+            - mountPath: /mnt/config
+              name: nodepool-config
+            - mountPath: /mnt/template
+              name: nodepool-config-template
+
       containers:
-        - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - name: nodepool-launcher
+          image: "{{ .Values.nodepool.image.repository }}:{{ .Values.nodepool.image.tag }}"
+          imagePullPolicy: {{ .Values.nodepool.image.pullPolicy }}
+          volumeMounts:
+            - mountPath: /etc/nodepool
+              name: nodepool-config
           ports:
             - name: http
               containerPort: 80
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
+          #livenessProbe:
+          #  httpGet:
+          #    path: /
+          #    port: http
+          #readinessProbe:
+          #  httpGet:
+          #    path: /
+          #    port: http
           resources:
-{{ toYaml .Values.resources | indent 12 }}
-    {{- with .Values.nodeSelector }}
+{{ toYaml .Values.nodepool.resources | indent 12 }}
+    {{- with .Values.nodepool.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
     {{- end }}
-    {{- with .Values.affinity }}
+    {{- with .Values.nodepool.affinity }}
       affinity:
 {{ toYaml . | indent 8 }}
     {{- end }}
-    {{- with .Values.tolerations }}
+    {{- with .Values.nodepool.tolerations }}
       tolerations:
 {{ toYaml . | indent 8 }}
     {{- end }}
+
+      volumes:
+        - name: nodepool-config
+          emptyDir:
+            medium: "Memory"
+        - name: nodepool-config-template
+          configMap:
+            name: {{ template "nodepool.fullname" . }}

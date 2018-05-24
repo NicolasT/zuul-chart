@@ -1,0 +1,57 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "nodepool.fullname" . }}-nodes
+  labels:
+    app: {{ template "nodepool.name" . }}
+    chart: {{ template "nodepool.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.node.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "nodepool.name" . }}
+      role: node
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "nodepool.name" . }}
+        role: node
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: node
+          image: "{{ .Values.node.image.repository }}:{{ .Values.node.image.tag }}"
+          imagePullPolicy: {{ .Values.node.image.pullPolicy }}
+          env:
+            - name: AUTHORIZED_KEYS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "nodepool.fullname" . }}
+                  key: publicKey
+          ports:
+            - name: ssh
+              containerPort: 22
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: ssh
+          readinessProbe:
+            tcpSocket:
+              port: ssh
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.node.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.node.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.node.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
