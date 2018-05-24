@@ -14,9 +14,9 @@ RUN yum install -y https://centos7.iuscommunity.org/ius-release.rpm && \
     rm -rf /var/cache/yum
 
 VOLUME /etc/zuul
-VOLUME /var/lib/zuul/.ssh
 
 RUN adduser --system zuul --home-dir /var/lib/zuul --create-home
+VOLUME /var/lib/zuul/.ssh
 
 # Install build-time dependencies, package and remove build-time dependencies
 # Note: not removing libffi-devel due to
