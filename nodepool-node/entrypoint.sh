@@ -12,7 +12,7 @@ then
 fi
 
 if test ! -f ~/.ssh/authorized_keys \
-        -a -n "${AUTHORIZED_KEYS}";
+        -a -n "${AUTHORIZED_KEYS:-}";
 then
         echo "Creating authorized_keys file"
         mkdir -p ~/.ssh && chmod 0700 ~/.ssh
