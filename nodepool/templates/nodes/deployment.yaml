@@ -1,7 +1,7 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ template "nodepool.fullname" . }}-nodes
+  name: {{ template "nodepool.fullname" . }}-node
   labels:
     app: {{ template "nodepool.name" . }}
     chart: {{ template "nodepool.chart" . }}
