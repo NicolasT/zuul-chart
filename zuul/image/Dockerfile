@@ -27,8 +27,11 @@ RUN cd /tmp && \
 FROM docker.io/centos:7.4.1708
 
 # Install runtime dependencies
-RUN yum install -y https://centos7.iuscommunity.org/ius-release.rpm && \
+RUN yum install -y \
+        epel-release \
+        https://centos7.iuscommunity.org/ius-release.rpm && \
     yum install -y \
+        bubblewrap \
         git \
         libffi \
         python35u \
