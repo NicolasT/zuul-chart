@@ -15,14 +15,55 @@ data:
     [gearman_server]
     start=true
 
+    [zookeeper]
+    hosts={{ .Release.Name }}-zookeeper-headless
+
     [executor]
     private_key_file=/var/lib/zuul/.ssh/nodepool_rsa
+    log_config=/etc/zuul/logging.conf
 
     [web]
     listen_address=0.0.0.0
+    log_config=/etc/zuul/logging.conf
 
     [scheduler]
     tenant_config=/etc/zuul/main.yaml
+    log_config=/etc/zuul/logging.conf
+
   main.yaml: |-
     - tenant:
         name: quickstart
+
+  logging.conf: |-
+    [loggers]
+    keys=root,zuul,gerrit
+
+    [handlers]
+    keys=console
+
+    [formatters]
+    keys=simple
+
+    [logger_root]
+    level=DEBUG
+    handlers=console
+
+    [logger_zuul]
+    level=DEBUG
+    handlers=console
+    qualname=zuul
+
+    [logger_gerrit]
+    level=DEBUG
+    handlers=console
+    qualname=gerrit
+
+    [handler_console]
+    level=DEBUG
+    class=StreamHandler
+    formatter=simple
+    args=(sys.stdout,)
+
+    [formatter_simple]
+    format=%(asctime)s %(levelname)s %(name)s: %(message)s
+    datefmt=
