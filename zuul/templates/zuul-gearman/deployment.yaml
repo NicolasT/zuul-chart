@@ -27,7 +27,8 @@ spec:
         - name: zuul-gearman
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["/zuul-gaerman.py", "-d", "-c", "/etc/zuul/zuul.conf"]
+          command: ["python3.5"]
+          args: ["/zuul-gearman.py", "-d", "-c", "/etc/zuul/zuul.conf"]
           volumeMounts:
             - mountPath: /etc/zuul
               name: zuul-config
