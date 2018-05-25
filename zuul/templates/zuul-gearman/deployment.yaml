@@ -1,0 +1,63 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "zuul.fullname" . }}-gearman
+  labels:
+    app: {{ template "zuul.name" . }}
+    chart: {{ template "zuul.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "zuul.name" . }}
+      role: gearman
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "zuul.name" . }}
+        role: gearman
+        release: {{ .Release.Name }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: zuul-gearman
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/zuul-gaerman.py", "-d", "-c", "/etc/zuul/zuul.conf"]
+          volumeMounts:
+            - mountPath: /etc/zuul
+              name: zuul-config
+          ports:
+            - name: gearman
+              containerPort: 4730
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: gearman
+          readinessProbe:
+            tcpSocket:
+              port: gearman
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+
+      volumes:
+        - name: zuul-config
+          configMap:
+            name: {{ template "zuul.fullname" . }}

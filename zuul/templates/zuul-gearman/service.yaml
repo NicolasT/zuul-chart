@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "zuul.fullname" . }}
+  name: {{ template "zuul.fullname" . }}-gearman
   labels:
     app: {{ template "zuul.name" . }}
     chart: {{ template "zuul.chart" . }}
@@ -10,10 +10,11 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
+    - port: 4730
+      targetPort: gearman
       protocol: TCP
-      name: http
+      name: gearman
   selector:
     app: {{ template "zuul.name" . }}
+    role: gearman
     release: {{ .Release.Name }}

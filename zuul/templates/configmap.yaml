@@ -10,10 +10,10 @@ metadata:
 data:
   zuul.conf: |-
     [gearman]
-    server=127.0.0.1
+    server={{ .Release.Name }}-gearman
 
     [gearman_server]
-    start=true
+    start=false
 
     [zookeeper]
     hosts={{ .Release.Name }}-zookeeper-headless

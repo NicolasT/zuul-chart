@@ -1,7 +1,7 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ template "zuul.fullname" . }}
+  name: {{ template "zuul.fullname" . }}-scheduler
   labels:
     app: {{ template "zuul.name" . }}
     chart: {{ template "zuul.chart" . }}
@@ -12,38 +12,18 @@ spec:
   selector:
     matchLabels:
       app: {{ template "zuul.name" . }}
+      role: scheduler
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
         app: {{ template "zuul.name" . }}
+        role: scheduler
         release: {{ .Release.Name }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
       containers:
-        - name: zuul-web
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["zuul-web", "-d", "-c", "/etc/zuul/zuul.conf"]
-          volumeMounts:
-            - mountPath: /etc/zuul
-              name: zuul-config
-          ports:
-            - name: http
-              containerPort: 9000
-              protocol: TCP
-          #livenessProbe:
-          #  httpGet:
-          #    path: /
-          #    port: http
-          #readinessProbe:
-          #  httpGet:
-          #    path: /
-          #    port: http
-          resources:
-{{ toYaml .Values.resources | indent 12 }}
-
         - name: zuul-scheduler
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -51,14 +31,8 @@ spec:
           volumeMounts:
             - mountPath: /etc/zuul
               name: zuul-config
-
-        - name: zuul-executor
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["zuul-executor", "-d", "-c", "/etc/zuul/zuul.conf"]
-          volumeMounts:
-            - mountPath: /etc/zuul
-              name: zuul-config
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
 
     {{- with .Values.nodeSelector }}
       nodeSelector:
