@@ -69,7 +69,7 @@ RUN yum install -y \
     yum clean all && \
     rm -rf /var/cache/yum
 
-COPY zuul-gaerman.py /zuul-gaerman.py
+COPY zuul-gearman.py /zuul-gearman.py
 
 USER zuul:zuul
 ENTRYPOINT ["zuul", "-c", "/etc/zuul/zuul.conf"]
