@@ -30,7 +30,7 @@ spec:
           command: ["sh"]
           args:
             - "-c"
-            - "cat /mnt/template/nodepool.yaml | /usr/src/nodepool-config-builder/nodepool-config-builder.py > /mnt/config/nodepool.yaml"
+            - "cat /mnt/template/nodepool.yaml | /usr/src/nodepool-config-builder/nodepool-config-builder.py | tee /mnt/config/nodepool.yaml"
 
           volumeMounts:
             - mountPath: /mnt/config
