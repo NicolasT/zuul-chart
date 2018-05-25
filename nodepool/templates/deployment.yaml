@@ -20,6 +20,9 @@ spec:
         app: {{ template "nodepool.name" . }}
         role: nodepool-launcher
         release: {{ .Release.Name }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secrets: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
     spec:
       initContainers:
         - name: nodepool-config-builder
