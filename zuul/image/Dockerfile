@@ -23,7 +23,32 @@ RUN cd /tmp && \
     cd zuul && \
     python setup.py sdist
 
-# Step two: use sdist package and build the 'runtime' container
+# Step two: build bubblewrap
+FROM docker.io/centos:7.4.1708 as builder2
+
+ARG bubblewrap_version=0.2.1
+
+RUN yum install -y \
+        gcc \
+        libcap-devel \
+        make \
+        && \
+    cd /tmp && \
+    curl -LO https://github.com/projectatomic/bubblewrap/releases/download/v$bubblewrap_version/bubblewrap-$bubblewrap_version.tar.xz && \
+    tar xvf bubblewrap-$bubblewrap_version.tar.xz && \
+    cd bubblewrap-$bubblewrap_version && \
+    ./configure --prefix=/usr/local && \
+    make && \
+    yum remove -y \
+        gcc \
+        libcap-devel \
+        make \
+        && \
+    yum clean all && \
+    rm -rf /var/cache/yum
+
+# Step three: use sdist package and bubblewrap and build the 'runtime'
+# container
 FROM docker.io/centos:7.4.1708
 
 # Install runtime dependencies
@@ -43,6 +68,9 @@ VOLUME /etc/zuul
 
 RUN adduser --system zuul --home-dir /var/lib/zuul --create-home
 VOLUME /var/lib/zuul/.ssh
+
+COPY --from=builder2 /tmp/bubblewrap-*/bwrap /usr/local/bin/bwrap
+RUN chown root:root /usr/local/bin/bwrap && chmod a+x /usr/local/bin/bwrap
 
 COPY --from=builder /tmp/zuul/dist/zuul-*.tar.gz .
 
