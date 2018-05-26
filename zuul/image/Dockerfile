@@ -28,10 +28,9 @@ FROM docker.io/centos:7.4.1708
 
 # Install runtime dependencies
 RUN yum install -y \
-        epel-release \
         https://centos7.iuscommunity.org/ius-release.rpm && \
     yum install -y \
-        bubblewrap \
+        http://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/x86_64/RPMS.classic/bubblewrap-0.2.1-alt1.x86_64.rpm \
         git \
         libffi \
         python35u \
