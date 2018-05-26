@@ -69,7 +69,8 @@ RUN adduser --system zuul --home-dir /var/lib/zuul --create-home
 VOLUME /var/lib/zuul/.ssh
 
 COPY --from=builder2 /tmp/bubblewrap-*/bwrap /usr/local/bin/bwrap
-RUN chown root:root /usr/local/bin/bwrap && chmod a+x /usr/local/bin/bwrap
+# Note: bwrap needs setuid on 'old' kernels
+RUN chown root:root /usr/local/bin/bwrap && chmod 4755 /usr/local/bin/bwrap
 
 COPY --from=builder /tmp/zuul/dist/zuul-*.tar.gz .
 
