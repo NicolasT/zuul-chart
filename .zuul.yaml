@@ -4,4 +4,4 @@
         - noop
         - run-test-command:
             vars:
-              test_command: echo "Hello world"
+              test_command: echo "Hello world!"
